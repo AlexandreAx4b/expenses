@@ -1,25 +1,27 @@
 import { Body, Controller, Get, Param, Post, Query, Put, Delete } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
-import { CreateContactDto, ListAllContacts, UpdateContactDto } from './dtos/contacts.dto';
+import { CreateContactDto, UpdateContactDto } from './dtos/contacts.dto';
+import { ContactService } from './contact.service';
+import { Contact } from './interfaces/contact.interface';
 
 @Controller('contact')
 @ApiTags('Contact')
 
 export class ContactController {
+  constructor(private contactService: ContactService) { }
 
   @Post()
-  async create(@Body() createContact : CreateContactDto) {
-    return 'Method POST Contact';
+  async create(@Body() createContactDto: CreateContactDto) {
+    this.contactService.create(createContactDto);
   }
 
   @Get()
-  findAll(@Query() listAllContacts: ListAllContacts) {
-    return 'Method Get(FindAll) Contact';
+  async findAll(): Promise<Contact[]> {
+    return this.contactService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string){
+  findOne(@Param('id') id: string) {
     return `Method GetOne, returns a #${id} contact`;
   }
 
